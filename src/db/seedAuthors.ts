@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma";
 
-export async function seedBooks() {
+export async function seedAuthors() {
     const author1 = await prisma.author.create({
         data: { firstName: "Robert", lastName: "Martin", affiliation: "Clean Code Inc" },
     });
@@ -9,12 +9,5 @@ export async function seedBooks() {
         data: { firstName: "Martin", lastName: "Fowler", affiliation: "ThoughtWorks" },
     });
 
-    await prisma.book.createMany({
-        data: [
-            { title: "Clean Code", isbn: "9780132350884", category: "Software", authorId: author1.id },
-            { title: "Refactoring", isbn: "9780201485677", category: "Software", authorId: author2.id },
-        ],
-    });
+    return [author1, author2];
 }
-
-

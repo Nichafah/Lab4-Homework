@@ -1,24 +1,13 @@
 import { prisma } from "../lib/prisma";
 
 export async function seedMembers() {
-    const member = await prisma.member.create({
-        data: {
-            memberCode: "M001",
-            firstName: "Alice",
-            lastName: "Smith",
-            phone: "0812345678"
-        }
+    const member1 = await prisma.member.create({
+        data: { memberCode: "M001", firstName: "Alice", lastName: "Smith", phone: "0812345678" },
     });
 
-    const book = await prisma.book.findFirst();
+    const member2 = await prisma.member.create({
+        data: { memberCode: "M002", firstName: "Bob", lastName: "Johnson", phone: "0898765432" },
+    });
 
-    if (book) {
-        await prisma.borrowRecord.create({
-            data: {
-                bookId: book.id,
-                memberId: member.id,
-                dueDate: new Date("2025-01-31")
-            }
-        });
-    }
+    return [member1, member2];
 }
