@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma";
 
-export async function seedBooks() {
+export async function seedBooks(authors: { firstName: string; lastName: string; affiliation: string | null; id: number; }[]) {
     const author1 = await prisma.author.create({
         data: { firstName: "Robert", lastName: "Martin", affiliation: "Clean Code Inc" },
     });

@@ -1,13 +1,9 @@
-import * as repo from "../repository/bookRepository";
+import * as repo from "../repository/bookRepositoryPrisma";
 
-export function getAllBooks() {
-    return repo.getAllBooks();
-}
-
-export function searchBook(title: string) {
-    return repo.findBookByTitle(title);
-}
-
-export function getDueBooks(date: Date) {
-    return repo.getDueBooks(date);
+export function searchBooks(
+    keyword: string,
+    pageSize: number,
+    pageNo: number
+) {
+    return repo.findBooksWithPagination(keyword, pageSize, pageNo);
 }

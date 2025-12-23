@@ -1,83 +1,17 @@
-import { Router } from "express";
-import { prisma } from "../lib/prisma";
+import express from "express";
+import * as service from "../services/bookService";
 
-const router = Router();
+const router = express.Router();
 
-/**
- * GET /books
- * GET /books?title=xxx
- * GET /books?dueDate=YYYY-MM-DD
- */
 router.get("/", async (req, res) => {
-    const { title, dueDate } = req.query;
+    const pageSize = parseInt(req.query.pageSize as string) || 5;
+    const pageNo = parseInt(req.query.pageNo as string) || 1;
+    const keyword = (req.query.keyword as string) || "";
 
-    // 🔎 ค้นหาตามชื่อหนังสือ
-    if (title) {
-        const books = await prisma.book.findMany({
-            where: {
-                title: {
-                    contains: title as string,
-                    mode: "insensitive",
-                },
-            },
-            include: {
-                author: true,
-            },
-        });
-        return res.json(books);
-    }
+    const result = await service.searchBooks(keyword, pageSize, pageNo);
 
-    // 📅 หนังสือที่กำหนดคืนในวันที่กำหนด
-    if (dueDate) {
-        // @ts-ignore
-        const borrows = await prisma.borrow.findMany({
-            where: {
-                dueDate: new Date(dueDate as string),
-            },
-            include: {
-                book: {
-                    include: {
-                        author: true,
-                    },
-                },
-                member: true,
-            },
-        });
-
-        return res.json(borrows);
-    }
-
-    // 📚 หนังสือทั้งหมด
-    const books = await prisma.book.findMany({
-        include: {
-            author: true,
-        },
-    });
-
-    res.json(books);
-});
-
-/**
- * GET /books/not-returned
- * หนังสือที่ยังไม่ได้คืน
- */
-router.get("/not-returned", async (_req, res) => {
-    // @ts-ignore
-    const borrows = await prisma.borrow.findMany({
-        where: {
-            returnedAt: null,
-        },
-        include: {
-            book: {
-                include: {
-                    author: true,
-                },
-            },
-            member: true,
-        },
-    });
-
-    res.json(borrows);
+    res.setHeader("x-total-count", result.count.toString());
+    res.json(result.books);
 });
 
 export default router;
