@@ -1,9 +1,9 @@
 import * as repo from "../repository/bookRepositoryPrisma";
 
-export function searchBooks(
+export function getBooksWithPagination(
     keyword: string,
     pageSize: number,
     pageNo: number
 ) {
-    return repo.findBooksWithPagination(keyword, pageSize, pageNo);
+    return repo.getBooksWithPagination(keyword, pageSize, pageNo);
 }
